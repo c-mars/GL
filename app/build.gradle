@@ -44,5 +44,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.jakewharton:butterknife:7.0.0'
     compile 'com.jakewharton.timber:timber:3.1.0'
-    compile 'org.projectlombok:lombok:1.16.4'
+    provided 'org.projectlombok:lombok:1.16.4'
 }
