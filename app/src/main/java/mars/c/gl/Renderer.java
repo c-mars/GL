@@ -3,9 +3,16 @@ package mars.c.gl;
 import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 
+import com.google.common.collect.Iterables;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -26,8 +33,8 @@ import static android.opengl.GLES20.glViewport;
  * Created by Constantine Mars on 6/29/15.
  */
 public class Renderer implements GLSurfaceView.Renderer {
-    private static final int VS=2;
-    private float[] vs={
+    private static final int VS = 2;
+    private float[] vs = {
 //            table
             0f, 0f,
             9f, 14f,
@@ -45,40 +52,60 @@ public class Renderer implements GLSurfaceView.Renderer {
             4.5f, 2f,
             4.5f, 12f
     };
+
+    private float[] translateToGLCoords(float[] a) {
+
+        if (a.length > 0) {
+            float[] o = new float[a.length];
+            float max = Collections.max(Arrays.asList(ArrayUtils.toObject(a))) * 2;
+            float middle = max / 2;
+            for (int i = 0; i < a.length; i++) {
+                float v=a[i];
+                float fx = 2 * a[i] / max;
+                float m = (fx>1 ? fx : 2-fx) / 2;
+                float ov = -1 + fx + m;
+                o[i]=ov;
+            }
+            return o;
+        }
+        return a;
+    }
+
     private int color = Color.GREEN;
-    private static final int FS=4;
+    private static final int FS = 4;
     private final FloatBuffer vd;
     private int p;
     private boolean v;
 
     public Renderer() {
         vd = ByteBuffer.allocateDirect(vs.length * FS)
-        .order(ByteOrder.nativeOrder())
-        .asFloatBuffer();
-        vd.put(vs);
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
+        float[] c = translateToGLCoords(vs);
+        vd.put(c);
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        glClearColor(0f,0f,0f,0f);
-        p=Shaders.linkProgram();
-        if(Shaders.validateProgram(p)){
+        glClearColor(0f, 0f, 0f, 0f);
+        p = Shaders.linkProgram();
+        if (Shaders.validateProgram(p)) {
             glUseProgram(p);
             Shaders.setVertices(p, vd, VS);
-            v=true;
+            v = true;
         }
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        glViewport(0,0,width,height);
+        glViewport(0, 0, width, height);
     }
 
     @Override
     public void onDrawFrame(GL10 gl) {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        if(v) {
+        if (v) {
             Shaders.setColor(color);
             glDrawArrays(GL_TRIANGLES, 0, 6);
             glDrawArrays(GL_LINES, 6, 2);
