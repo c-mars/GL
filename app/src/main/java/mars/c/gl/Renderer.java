@@ -73,22 +73,28 @@ public class Renderer implements GLSurfaceView.Renderer {
             0f, 0.25f
     };
 
-    private float[] translateToGLCoords(float[] a) {
+//    // FIXME: 7/15/15 get separate x and y max values
+    private float[] translateToGLCoords(float[] in) {
 
-        if (a.length > 0) {
-            float[] o = new float[a.length];
-            float max = Collections.max(Arrays.asList(ArrayUtils.toObject(a))) * 2;
-            float middle = max / 2;
-            for (int i = 0; i < a.length; i++) {
-                float v=a[i];
-                float fx = 2 * a[i] / max;
-                float m = (fx>1 ? fx : 2-fx) / 2;
-                float ov = -1 + fx + m;
-                o[i]=ov;
+        if (in.length > 0) {
+            float oleft=-0.5f;
+            float oright=0.5f;
+            float omid=0f;
+
+            float[] out = new float[in.length];
+            float max = Collections.max(Arrays.asList(ArrayUtils.toObject(in))) ;
+            float mid = max / 2f;
+
+            float scale=oright/(max-mid);
+
+            for (int i = 0; i < in.length; i++) {
+                float x=in[i];
+                float ox = (x-mid)*scale;
+                out[i]=ox;
             }
-            return o;
+            return out;
         }
-        return a;
+        return in;
     }
 
     private int color = Color.GREEN;
@@ -101,7 +107,9 @@ public class Renderer implements GLSurfaceView.Renderer {
         vd = ByteBuffer.allocateDirect(vs.length * FS)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        float[] c = vs;//translateToGLCoords(vs);
+        float[] c = vs;
+//        // FIXME: 7/15/15 translate can be used when left/right margins calculation becomes possible
+//                translateToGLCoords(vsOriginal);
         vd.put(c);
     }
 
