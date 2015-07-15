@@ -40,6 +40,7 @@ public class Shaders {
             "attribute vec4 "+ POSITION + ";"+
             "void main() {" +
             "   gl_Position="+ POSITION + ";"+
+            "   gl_PointSize = 10.0;"+
             "}";
     private static final String FRAGMENT_SHADER="" +
             "precision mediump float" + ";"+

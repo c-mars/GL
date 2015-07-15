@@ -34,7 +34,7 @@ import static android.opengl.GLES20.glViewport;
  */
 public class Renderer implements GLSurfaceView.Renderer {
     private static final int VS = 2;
-    private float[] vs = {
+    private float[] vsOriginal = {
 //            table
             0f, 0f,
             9f, 14f,
@@ -51,6 +51,26 @@ public class Renderer implements GLSurfaceView.Renderer {
 //            mallets
             4.5f, 2f,
             4.5f, 12f
+
+    };
+
+    private float[] vs = {
+//            table
+            -0.5f, -0.5f,
+            0.5f, 0.5f,
+            -0.5f, 0.5f,
+
+            -0.5f, -0.5f,
+            0.5f, -0.5f,
+            0.5f, 0.5f,
+
+//            line
+            -0.5f, 0f,
+            0.5f, 0f,
+
+//            mallets
+            0f, -0.25f,
+            0f, 0.25f
     };
 
     private float[] translateToGLCoords(float[] a) {
@@ -81,7 +101,7 @@ public class Renderer implements GLSurfaceView.Renderer {
         vd = ByteBuffer.allocateDirect(vs.length * FS)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        float[] c = translateToGLCoords(vs);
+        float[] c = vs;//translateToGLCoords(vs);
         vd.put(c);
     }
 
@@ -106,8 +126,10 @@ public class Renderer implements GLSurfaceView.Renderer {
         glClear(GL_COLOR_BUFFER_BIT);
 
         if (v) {
-            Shaders.setColor(color);
+            Shaders.setColor(Color.GRAY);
             glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            Shaders.setColor(Color.RED);
             glDrawArrays(GL_LINES, 6, 2);
             glDrawArrays(GL_POINTS, 8, 1);
             glDrawArrays(GL_POINTS, 9, 1);
