@@ -3,8 +3,6 @@ package mars.c.gl;
 import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 
-import com.google.common.collect.Iterables;
-
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.nio.ByteBuffer;
@@ -12,10 +10,11 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import mars.c.gl.models.AllObjects;
 
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.GL_LINES;
@@ -24,8 +23,6 @@ import static android.opengl.GLES20.GL_TRIANGLES;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glDrawArrays;
-import static android.opengl.GLES20.glDrawElements;
-import static android.opengl.GLES20.glUniform4fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glViewport;
 
@@ -34,44 +31,6 @@ import static android.opengl.GLES20.glViewport;
  */
 public class Renderer implements GLSurfaceView.Renderer {
     private static final int VS = 2;
-    private float[] vsOriginal = {
-//            table
-            0f, 0f,
-            9f, 14f,
-            0f, 14f,
-
-            0f, 0f,
-            9f, 0f,
-            9f, 14f,
-
-//            line
-            0f, 7f,
-            9f, 7f,
-
-//            mallets
-            4.5f, 2f,
-            4.5f, 12f
-
-    };
-
-    private float[] vs = {
-//            table
-            -0.5f, -0.5f,
-            0.5f, 0.5f,
-            -0.5f, 0.5f,
-
-            -0.5f, -0.5f,
-            0.5f, -0.5f,
-            0.5f, 0.5f,
-
-//            line
-            -0.5f, 0f,
-            0.5f, 0f,
-
-//            mallets
-            0f, -0.25f,
-            0f, 0.25f
-    };
 
 //    // FIXME: 7/15/15 get separate x and y max values
     private float[] translateToGLCoords(float[] in) {
@@ -102,8 +61,10 @@ public class Renderer implements GLSurfaceView.Renderer {
     private final FloatBuffer vd;
     private int p;
     private boolean v;
+    private AllObjects allObjects=new AllObjects();
 
     public Renderer() {
+        float[] vs= allObjects.getVerticesGL();
         vd = ByteBuffer.allocateDirect(vs.length * FS)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
