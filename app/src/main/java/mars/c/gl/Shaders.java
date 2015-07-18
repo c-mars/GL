@@ -1,7 +1,5 @@
 package mars.c.gl;
 
-import android.graphics.Color;
-
 import java.nio.FloatBuffer;
 
 import timber.log.Timber;
@@ -23,10 +21,8 @@ import static android.opengl.GLES20.glGetProgramInfoLog;
 import static android.opengl.GLES20.glGetProgramiv;
 import static android.opengl.GLES20.glGetShaderInfoLog;
 import static android.opengl.GLES20.glGetShaderiv;
-import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glLinkProgram;
 import static android.opengl.GLES20.glShaderSource;
-import static android.opengl.GLES20.glUniform4f;
 import static android.opengl.GLES20.glValidateProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 
@@ -34,41 +30,47 @@ import static android.opengl.GLES20.glVertexAttribPointer;
  * Created by Constantine Mars on 6/29/15.
  */
 public class Shaders {
-    public static final String POSITION ="ap";
-    public static final String COLOR ="uc";
-    private static final String VERTEX_SHADER="" +
-            "attribute vec4 "+ POSITION + ";"+
+    public static final String A_POSITION = "a_Position";
+    public static final String A_COLOR = "a_Color"; //attribute
+    public static final String V_COLOR = "v_Color"; // varying
+    private static final String VERTEX_SHADER = "" +
+            "attribute vec4 " + A_POSITION + ";" +
+            "attribute vec4 " + A_COLOR + ";" +
+            "varying vec4 " + V_COLOR + ";" +
             "void main() {" +
-            "   gl_Position="+ POSITION + ";"+
-            "   gl_PointSize = 10.0;"+
+            "   " + V_COLOR + " = " + A_COLOR + ";" +
+            "   gl_Position=" + A_POSITION + ";" +
+            "   gl_PointSize = 10.0;" +
             "}";
-    private static final String FRAGMENT_SHADER="" +
-            "precision mediump float" + ";"+
-            "uniform vec4 "+ COLOR + ";"+
+    private static final String FRAGMENT_SHADER = "" +
+            "precision mediump float" + ";" +
+            "varying vec4 " + V_COLOR + ";" +
             "void main() {" +
-            "   gl_FragColor="+ COLOR + ";"+
+            "   gl_FragColor=" + V_COLOR + ";" +
             "}";
-    private static Integer uColor;
-    private static Integer aPos;
-    public static int compileVertexShader(){
+
+    private static Integer aColorLocation;
+    private static Integer aPositionLocation;
+
+    public static int compileVertexShader() {
         return compileShader(GL_VERTEX_SHADER, VERTEX_SHADER);
     }
 
-    public static int compileFragmentShader(){
+    public static int compileFragmentShader() {
         return compileShader(GL_FRAGMENT_SHADER, FRAGMENT_SHADER);
     }
 
-    private static int compileShader(int t, String c){
-        int s=glCreateShader(t);
-        if(s==0){
+    private static int compileShader(int t, String c) {
+        int s = glCreateShader(t);
+        if (s == 0) {
             Timber.e("Couldn't create shader");
             return 0;
         }
         glShaderSource(s, c);
         glCompileShader(s);
-        int[] cs=new int[1];
+        int[] cs = new int[1];
         glGetShaderiv(s, GL_COMPILE_STATUS, cs, 0);
-        if(cs[0]==0) {
+        if (cs[0] == 0) {
             Timber.e("Shader [" + s + "] compilation error: " + glGetShaderInfoLog(s));
             glDeleteShader(s);
             return 0;
@@ -76,26 +78,26 @@ public class Shaders {
         return s;
     }
 
-    public static int linkProgram(){
-        int vs=compileVertexShader();
-        int fs=compileFragmentShader();
-        int p=glCreateProgram();
-        if(p==0){
-            Timber.e("Create program failed: "+glGetProgramInfoLog(p));
+    public static int linkProgram() {
+        int vs = compileVertexShader();
+        int fs = compileFragmentShader();
+        int p = glCreateProgram();
+        if (p == 0) {
+            Timber.e("Create program failed: " + glGetProgramInfoLog(p));
             return 0;
         }
         glAttachShader(p, vs);
         glAttachShader(p, fs);
         glLinkProgram(p);
-        int[] ls=new int[1];
+        int[] ls = new int[1];
         glGetProgramiv(p, GL_LINK_STATUS, ls, 0);
-        if(ls[0]==0){
+        if (ls[0] == 0) {
             Timber.e("Link program failed: " + glGetProgramInfoLog(p));
             return 0;
         }
 
-        uColor=glGetUniformLocation(p, COLOR);
-        aPos=glGetAttribLocation(p, POSITION);
+        aPositionLocation = glGetAttribLocation(p, A_POSITION);
+        aColorLocation = glGetAttribLocation(p, A_COLOR);
 
         return p;
     }
@@ -108,14 +110,16 @@ public class Shaders {
         return vs[0] != 0;
     }
 
-    public static void setVertices(int p, FloatBuffer vd, int vs){
-        vd.position(0);
-        glVertexAttribPointer(aPos, vs, GL_FLOAT, false, 0, vd);
-        glEnableVertexAttribArray(aPos);
-    }
+    public static void setVertices(int p, FloatBuffer vertexData, int POSITION_COMPONENT_COUNT, int STRIDE, int COLOR_COMPONENT_COUNT) {
+//        set vertices array for position
+        vertexData.position(0);
+        glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, vertexData);
+        glEnableVertexAttribArray(aPositionLocation);
 
-    public static void setColor(int c){
-        glUniform4f(uColor, Color.red(c), Color.green(c), Color.blue(c), 0f);
+//        set vertices array for color
+        vertexData.position(POSITION_COMPONENT_COUNT);
+        glVertexAttribPointer(aColorLocation, COLOR_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, vertexData);
+        glEnableVertexAttribArray(aColorLocation);
     }
 
 }

@@ -45,4 +45,21 @@ public class AllObjects {
             0f, -0.25f,
             0f, 0.25f
     };
+
+        float[] tableVerticesWithTriangles = {
+// Order of coordinates: X, Y, R, G, B
+                // Triangle Fan
+                0f,    0f,   1f,   1f,   1f,
+                -0.5f, -0.5f, 0.7f, 0.7f, 0.7f,
+                0.5f, -0.5f, 0.7f, 0.7f, 0.7f,
+                0.5f,  0.5f, 0.7f, 0.7f, 0.7f,
+                -0.5f,  0.5f, 0.7f, 0.7f, 0.7f,
+                -0.5f, -0.5f, 0.7f, 0.7f, 0.7f,
+// Line 1
+                -0.5f, 0f, 1f, 0f, 0f,
+                0.5f, 0f, 1f, 0f, 0f,
+// Mallets
+                0f, -0.25f, 0f, 0f, 1f,
+                0f,  0.25f, 1f, 0f, 0f
+        };
 }
