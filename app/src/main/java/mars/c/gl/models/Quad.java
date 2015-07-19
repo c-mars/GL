@@ -6,23 +6,24 @@ import static android.opengl.GLES20.glDrawArrays;
 /**
  * Created by Constantine Mars on 7/19/15.
  */
-public class Triangle extends Object {
+public class Quad extends Object {
 //    each object has its own mesh of vertices
     private float[] vertices = {
-        0f, 1f, 0f, 1f, 0f,
-        -1f, -1f, 1f, 0f, 0f,
-        1f, -1, 1f, 1f, 0f,
-        0f, 1f, 0f, 1f, 0f,
+        -0.7f, -0.7f, 1f, 0f, 0f,
+        0.7f, -0.7f, 0f, 1f, 0f,
+        0.7f, 0.7f, 0f, 0f, 1f,
+        -0.7f, 0.7f, 1f, 1f, 0f,
+        -0.7f, -0.7f, 1f, 0f, 0f,
     };
 
-    public Triangle() {
+    public Quad() {
         super();
 //
         setMesh(vertices);
     }
 
     public void draw() {
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 5);
     }
 
 }
