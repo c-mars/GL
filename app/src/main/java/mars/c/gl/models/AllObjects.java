@@ -71,7 +71,6 @@ public class AllObjects extends Object{
         public void draw(){
                 glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-//            Shaders.setuColorLocation(Color.RED);
                 glDrawArrays(GL_LINES, 6, 2);
                 glDrawArrays(GL_POINTS, 8, 1);
                 glDrawArrays(GL_POINTS, 9, 1);

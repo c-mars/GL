@@ -35,7 +35,7 @@ public class MainActivity extends ActionBarActivity {
         r.addView(sv);
         if(GL.supportsGLES2(this)){
             sv.setEGLContextClientVersion(2);
-            sv.setRenderer(new Renderer());
+            sv.setRenderer(new Renderer(this));
             sv.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
             rs=true;
         } else {

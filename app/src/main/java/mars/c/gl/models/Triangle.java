@@ -8,7 +8,7 @@ import static android.opengl.GLES20.glDrawArrays;
  */
 public class Triangle extends Object {
 //    each object has its own mesh of vertices
-    private float[] vertices = {
+    private final float[] vertices = {
         0f, 1f, 0f, 1f, 0f,
         -1f, -1f, 1f, 0f, 0f,
         1f, -1, 1f, 1f, 0f,
@@ -17,12 +17,11 @@ public class Triangle extends Object {
 
     public Triangle() {
         super();
-//
-        setMesh(vertices);
+        setMesh(vertices, 5, 4);
     }
 
     public void draw() {
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, getVerticesCount());
     }
 
 }
